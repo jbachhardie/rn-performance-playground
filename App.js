@@ -131,6 +131,30 @@ function ManyScreen() {
   );
 }
 
+const _LittleMemo = memo(({ content }) => <Text>{content}</Text>);
+function ManyLittleMemoScreen() {
+  const testView = useTestView();
+  const a = [...Array(2000).keys()];
+
+  return (
+    <View style={viewStyle}>
+      <View style={testView}>
+        <Text>JS Render loop</Text>
+      </View>
+      <NativeTestView />
+      <Text style={{ margin: 50 }}>
+        Here we are rendering 2000 Text elements but they're each individually
+        memoized with React.memo.
+      </Text>
+      <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap" }}>
+        {a.map((i) => (
+          <_LittleMemo content={i} key={i} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
 const _ManyMemo = memo(() => {
   const a = [...Array(2000).keys()];
   return (
@@ -361,6 +385,10 @@ export default function App() {
         <Drawer.Screen
           name="ManyMemo"
           component={withUnmounting(ManyMemoScreen)}
+        />
+        <Drawer.Screen
+          name="ManyLittleMemo"
+          component={withUnmounting(ManyLittleMemoScreen)}
         />
         <Drawer.Screen
           name="ManyWithUnstableKeys"
