@@ -3,6 +3,28 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { useEffect } from "react";
 import { Button, View, Text, Animated, Easing, StyleSheet } from "react-native";
+import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue';
+
+if (__DEV__) {
+  console.disableYellowBox = true
+  const defaultLog = () => ({
+    since: Date.now(),
+    toJs: 0,
+    toAndroid: 0,
+  })
+  let messagesSent = defaultLog()
+  setInterval(() => {
+    console.log('Bridge traffic in the past', (Date.now() - messagesSent.since) / 1000, 'seconds:')
+    console.log('to JS:', messagesSent.toJs)
+    console.log('to Android:', messagesSent.toAndroid)
+    messagesSent = defaultLog()
+  }, 10000)
+  const logSpy = (info) => {
+    const fromTo = info.type === 0 ? 'toJs' : 'toAndroid';
+    messagesSent[fromTo]++
+  };
+  MessageQueue.spy(logSpy);
+}
 
 function slowFn(baseNumber) {
   let result = 0;
